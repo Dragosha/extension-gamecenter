@@ -1,0 +1,14 @@
+name: GameCenterExtExternal
+
+platforms:
+  arm64-ios:
+    context:
+        weakFrameworks: ["Foundation", "GameKit", "UIKit"]
+
+  armv7-ios:
+    context:
+        weakFrameworks: ["Foundation", "GameKit", "UIKit"]
+
+  x86_64-ios:
+    context:
+        weakFrameworks: ["Foundation", "GameKit", "UIKit"]

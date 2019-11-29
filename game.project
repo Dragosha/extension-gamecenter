@@ -1,0 +1,19 @@
+[bootstrap]
+main_collection = /main/gamecenter.collectionc
+
+[script]
+shared_state = 1
+
+[display]
+width = 960
+height = 640
+
+[project]
+title = extension-gamecenter
+
+[library]
+include_dirs = extension-gamecenter
+
+[ios]
+bundle_identifier = com.defoldextension.gamecenter
+
