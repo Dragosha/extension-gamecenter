@@ -30,9 +30,9 @@ static void HandleRegistrationResult(const dmGameCenter::Command* cmd)
     {
         return;
     }
-
-    if (cmd->m_playerID) {
-        lua_pushnil(L);
+    
+    if (cmd->m_playerID) {     
+        dmLogInfo("login callback Result %s", cmd->m_playerID);
         lua_newtable(L);
         lua_pushstring(L, cmd->m_playerID);
         lua_setfield(L, -2, "playerID");
@@ -40,6 +40,7 @@ static void HandleRegistrationResult(const dmGameCenter::Command* cmd)
             lua_pushstring(L, cmd->m_alias);
             lua_setfield(L, -2, "alias");
         }
+        lua_pushnil(L);
     } else {
         lua_pushnil(L);
         PushError(L, cmd->m_Error);
@@ -48,8 +49,9 @@ static void HandleRegistrationResult(const dmGameCenter::Command* cmd)
 
     int ret = dmScript::PCall(L, 3, 0);
     (void)ret;
-
+    dmLogInfo("PCALL\n");
     dmScript::TeardownCallback(cmd->m_Callback);
+    dmLogInfo("TeardownCallback\n");
 }
 
 
@@ -61,12 +63,13 @@ void dmGameCenter::HandleCommand(dmGameCenter::Command* cmd, void* ctx)
     case dmGameCenter::COMMAND_TYPE_REGISTRATION_RESULT:  HandleRegistrationResult(cmd); break;
     default: assert(false);
     }
-    free((void*)cmd->m_Error);
-    free((void*)cmd->m_playerID);
-    free((void*)cmd->m_alias);
+    //free((void*)cmd->m_Error);
+    //free((void*)cmd->m_playerID);
+    //free((void*)cmd->m_alias);
 
-    if (cmd->m_Command == dmGameCenter::COMMAND_TYPE_REGISTRATION_RESULT)
-        dmScript::DestroyCallback(cmd->m_Callback);
+    dmLogInfo("HandleCommand\n");
+    //if (cmd->m_Command == dmGameCenter::COMMAND_TYPE_REGISTRATION_RESULT)
+    //    dmScript::DestroyCallback(cmd->m_Callback);
 }
 
 void dmGameCenter::QueueCreate(CommandQueue* queue)
@@ -102,10 +105,12 @@ void dmGameCenter::QueueFlush(CommandQueue* queue, CommandFn fn, void* ctx)
         return;
     }
 
+    dmLogInfo("Game Center QueueFlush\n");
     DM_MUTEX_SCOPED_LOCK(queue->m_Mutex);
-    //for(uint32_t i = 0; i != queue->m_Commands.Size(); ++i)    {        fn(&queue->m_Commands[i], ctx);    }
-    queue->m_Commands.Map(fn, ctx);
+    for(uint32_t i = 0; i != queue->m_Commands.Size(); ++i){ fn(&queue->m_Commands[i], ctx); }
+    //queue->m_Commands.Map(fn, ctx);
     queue->m_Commands.SetSize(0);
+    dmLogInfo("Game Center QueueFlush End\n");
 }
 
 /** Gets a number (or a default value) as a integer from a table

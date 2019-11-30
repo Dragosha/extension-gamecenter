@@ -32,20 +32,6 @@ struct GameCenter
 
 static GameCenter g_GameCenter;
 
-static void PushError(lua_State*L, NSError* error)
-{
-    // Could be extended with error codes etc
-    if (error != 0) {
-        lua_newtable(L);
-        lua_pushstring(L, "error");
-        lua_pushstring(L, [error.localizedDescription UTF8String]);
-        lua_rawset(L, -3);
-    } else {
-        lua_pushnil(L);
-    }
-}
-
-
 
 @protocol GameCenterManagerDelegate <GKGameCenterControllerDelegate>
 @end
@@ -105,7 +91,7 @@ NSString *const PresentAuthenticationViewController = @"present_authentication_v
                 cmd.m_Command = dmGameCenter::COMMAND_TYPE_REGISTRATION_RESULT;
                 cmd.m_playerID = [playerID UTF8String];
                 cmd.m_alias = [alias UTF8String];
-                dmPush::QueuePush(&g_GameCenter.m_CommandQueue, &cmd);
+                dmGameCenter::QueuePush(&g_GameCenter.m_CommandQueue, &cmd);
 
             } else if (error != nil) {
                 NSLog (@"Game Center: Error occurred authenticating-");
@@ -115,13 +101,13 @@ NSString *const PresentAuthenticationViewController = @"present_authentication_v
                 cmd.m_Callback = g_GameCenter.m_Callback;
                 cmd.m_Command = dmGameCenter::COMMAND_TYPE_REGISTRATION_RESULT;
                 cmd.m_Error = [[error localizedDescription] UTF8String];
-                dmPush::QueuePush(&g_GameCenter.m_CommandQueue, &cmd);
+                dmGameCenter::QueuePush(&g_GameCenter.m_CommandQueue, &cmd);
             } else {
                 dmGameCenter::Command cmd;
                 cmd.m_Callback = g_GameCenter.m_Callback;
                 cmd.m_Command = dmGameCenter::COMMAND_TYPE_REGISTRATION_RESULT;
                 cmd.m_Error = "Unknown";
-                dmPush::QueuePush(&g_GameCenter.m_CommandQueue, &cmd);
+                dmGameCenter::QueuePush(&g_GameCenter.m_CommandQueue, &cmd);
             }
         };
     }
@@ -154,7 +140,6 @@ NSString *const PresentAuthenticationViewController = @"present_authentication_v
 - (void) login {
     @try {
 
-        if (isGameCenterAvailable() == true) {
              NSLog(@"login in GameCenter is available");
             [[NSNotificationCenter defaultCenter]
              addObserver:self
@@ -163,10 +148,6 @@ NSString *const PresentAuthenticationViewController = @"present_authentication_v
              object:nil];
 
             [self authenticateLocalPlayer];
-        } else {
-            NSLog(@"GameCenter is not available");
-
-        }
     }
     @catch (NSException *exception){
         NSLog(@"login Caught an exception");
@@ -260,11 +241,6 @@ static int isAvailable(lua_State* L)
 }
 
 
-static void _error(CallbackInfo *cbkInfo) {
-    invokeErrorCallback(cbkInfo);
-    unregisterCallback(cbkInfo->m_Cbk);
-}
-
 /** Authenticate local player, show Game Center login modal if not logged yet.
  */
 static int login(lua_State* L)
@@ -299,7 +275,7 @@ static int reportScore(lua_State* L)
     }
 
     dmLogInfo("leaderboardId : %s\n", leaderboardId);
-    dmLogInfo("score : %g\n", score);
+    dmLogInfo("score : %d\n", score);
 
 
     [[GameKitManager sharedGameKitManager] reportScore:@(leaderboardId) score:score];
