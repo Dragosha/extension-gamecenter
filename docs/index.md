@@ -4,7 +4,7 @@ layout: default
 
 # GameCenter API documentation
 
-Functions for interacting with push notifications. Supported on iOS.
+Functions for interacting with Apple Game Center. Supported on iOS.
 
 # Usage
 To use this library in your Defold project, add the following URL to your <code class="inline-code-block">game.project</code> dependencies:

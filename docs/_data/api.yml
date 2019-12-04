@@ -149,6 +149,7 @@
             if login_cb_complete then 
               gamecenter.submitAchievement({identifier="com.example.gamecenter.achievementA", percentComplete=45.0})
             end
+            ```
     
 #*****************************************************************************************************
 
