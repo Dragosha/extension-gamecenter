@@ -1,6 +1,6 @@
 #if defined(DM_PLATFORM_IOS)
-#ifndef DM_PUSH_UTILS
-#define DM_PUSH_UTILS
+#ifndef DM_GAMECENTER_UTILS
+#define DM_GAMECENTER_UTILS
 
 #include <dmsdk/sdk.h>
 

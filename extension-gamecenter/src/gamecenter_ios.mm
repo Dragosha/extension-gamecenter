@@ -83,14 +83,14 @@ NSString *const PresentAuthenticationViewController = @"present_authentication_v
                 [self setAuthenticationViewController:viewController];
             } else if([GKLocalPlayer localPlayer].isAuthenticated) {
                 NSLog (@"Game Center: You are logged in to game center.");
-                NSString *playerID=localPlayer.playerID;
-                NSString *alias=localPlayer.alias;
+                // NSString *playerID=localPlayer.playerID;
+                // NSString *alias=localPlayer.alias;
 
                 dmGameCenter::Command cmd;
                 cmd.m_Callback = g_GameCenter.m_Callback;
                 cmd.m_Command = dmGameCenter::COMMAND_TYPE_REGISTRATION_RESULT;
-                cmd.m_playerID = [playerID UTF8String];
-                cmd.m_alias = [alias UTF8String];
+                cmd.m_playerID = [localPlayer.playerID UTF8String];
+                cmd.m_alias = [localPlayer.alias UTF8String];
                 dmGameCenter::QueuePush(&g_GameCenter.m_CommandQueue, &cmd);
 
             } else if (error != nil) {
